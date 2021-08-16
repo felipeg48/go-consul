@@ -1,0 +1,3 @@
+= Go Consul
+
+Example on how to use Hashicorp Consul with Go
