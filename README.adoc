@@ -1,3 +1,82 @@
 = Go Consul
 
 Example on how to use Hashicorp Consul with Go
+
+
+== Consul Services
+
+[source,json]
+.payload.json
+----
+{
+  "ID": "redis1",
+  "Name": "redis",
+  "Tags": ["primary", "v1"],
+  "Address": "127.0.0.1",
+  "Port": 8000,
+  "Meta": {
+    "redis_version": "4.0"
+  },
+  "EnableTagOverride": false,
+  "Check": {
+    "DeregisterCriticalServiceAfter": "90m",
+    "Args": ["/usr/local/bin/check_redis.py"],
+    "Interval": "10s",
+    "Timeout": "5s"
+  },
+  "Weights": {
+    "Passing": 10,
+    "Warning": 1
+  }
+}
+
+----
+
+- *Register Service*
++
+[source,shell]
+----
+curl \
+    --request PUT \
+    --data @payload.json \
+    http://127.0.0.1:8500/v1/agent/service/register?replace-existing-checks=true
+
+----
+
+- *Get Services*
++
+[source,shell]
+----
+curl -s \
+    http://127.0.0.1:8500/v1/agent/services | jq .
+----
+
+- *Get Individual Service*
++
+[source,shell]
+----
+curl -s --get \
+    http://127.0.0.1:8500/v1/agent/services --data-urlencode 'filter= Service == "simple"' | jq .
+----
+
+
+- *Deregister Service*
++
+[source,shell]
+----
+curl \
+    --request PUT \
+    http://127.0.0.1:8500/v1/agent/service/deregister/my-service-id
+----
+
+
+
+== References
+
+- https://www.consul.io/api-docs/agent/service[^]
+- https://www.consul.io/api-docs/features/filtering[^]
+
+
+
+
+
