@@ -7,7 +7,7 @@ import (
 
 type Client interface {
 	Service(string, string) ([]*consul.ServiceEntry, *consul.QueryMeta, error)
-	Register(string, int) error
+	Register(string, string, string, int, []string) error
 	DeRegister(string) error
 }
 
@@ -28,11 +28,13 @@ func NewConsulClient(addr string) (*client, error) {
 }
 
 // Register a service with consul local agent
-func (c *client) Register(name string, port int) error {
+func (c *client) Register(id string,name string, address string , port int, tags []string) error {
 	reg := &consul.AgentServiceRegistration{
-		ID:   name,
-		Name: name,
-		Port: port,
+		ID:      id,
+		Name:    name,
+		Port:    port,
+		Address: address,
+		Tags: tags,
 	}
 	return c.consul.Agent().ServiceRegister(reg)
 }
@@ -53,21 +55,4 @@ func (c *client) Service(service, tag string) ([]*consul.ServiceEntry, *consul.Q
 		return nil, nil, err
 	}
 	return addrs, meta, nil
-}
-
-func main(){
-	c, error := NewConsulClient("localhost:8500");
-
-	if error != nil {
-		fmt.Errorf("error: %s", error.Error())
-	}else{
-		s,_, error := c.Service("simple","primary")
-
-		if error == nil {
-			fmt.Printf("service: %s\n", s[0].Service.Service)
-			fmt.Printf("ID: %s\n", s[0].Service.ID)
-			fmt.Printf("address: %s\n", s[0].Service.Address)
-			fmt.Printf("port: %d\n", s[0].Service.Port)
-		}
-	}
 }
