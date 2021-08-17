@@ -9,18 +9,18 @@ Example on how to use Hashicorp Consul with Go
 .payload.json
 ----
 {
-  "ID": "redis1",
-  "Name": "redis",
+  "ID": "2e9a11a2-862b-4729-b321-d13b69775da3",
+  "Name": "simple",
   "Tags": ["primary", "v1"],
   "Address": "127.0.0.1",
   "Port": 8000,
   "Meta": {
-    "redis_version": "4.0"
+    "simple_version": "4.0"
   },
   "EnableTagOverride": false,
   "Check": {
     "DeregisterCriticalServiceAfter": "90m",
-    "Args": ["/usr/local/bin/check_redis.py"],
+    "Args": ["/usr/local/bin/check_service.py"],
     "Interval": "10s",
     "Timeout": "5s"
   },
